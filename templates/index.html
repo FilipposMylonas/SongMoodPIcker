@@ -264,7 +264,6 @@
     <div class="songs-container" id="songs-container"></div>
 </div>
 
-
 <script>
     let sessionHistory = [];
 
@@ -304,16 +303,34 @@
         sessionHistory.forEach((entry, index) => {
             const historyItem = document.createElement('div');
             historyItem.className = 'history-item';
-            historyItem.textContent = `${entry.mood} (${entry.analyzed_mood})`;
+            historyItem.textContent = entry.mood;
             historyItem.onclick = () => {
-                displaySavedSongs(entry);
+                displaySavedSongs(entry.mood);
             };
             historyList.appendChild(historyItem);
         });
     }
 
-    function displaySavedSongs(entry) {
-        updateSongsDisplay(entry.mood, entry.analyzed_mood, entry.songs);
+    function displaySavedSongs(mood) {
+        const loadingMessage = document.getElementById('loading-message');
+        loadingMessage.textContent = "Loading saved recommendations...";
+
+        fetch('/recommend', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: `mood=${encodeURIComponent(mood)}`
+        })
+            .then(response => response.json())
+            .then(data => {
+                loadingMessage.textContent = "";
+                updateSongsDisplay(data.mood, data.songs);
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                loadingMessage.textContent = "An error occurred. Please try again.";
+            });
     }
 
     function clearHistory() {
@@ -340,8 +357,8 @@
             .then(response => response.json())
             .then(data => {
                 loadingMessage.textContent = "";
-                updateSongsDisplay(data.mood, data.analyzed_mood, data.songs);
-                fetchHistory();
+                updateSongsDisplay(data.mood, data.songs);
+                fetchHistory();  // Update history after new recommendation
             })
             .catch(error => {
                 console.error('Error:', error);
@@ -349,19 +366,19 @@
             });
     }
 
-    function updateSongsDisplay(originalMood, analyzedMood, songs) {
+    function updateSongsDisplay(mood, songs) {
         const songsContainer = document.getElementById('songs-container');
         songsContainer.innerHTML = `
-                <h2 class="mood-title">Songs for "${originalMood}" mood (Analyzed as: ${analyzedMood})</h2>
-                <ul>
-                    ${songs.map((song, index) => `
-                        <li style="animation-delay: ${index * 0.1}s;">
-                            <img src="${song.image}" alt="Album cover">
-                            <a href="${song.url}" target="_blank">${song.name} by ${song.artist}</a>
-                        </li>
-                    `).join('')}
-                </ul>
-            `;
+            <h2 class="mood-title">Songs for "${mood}"</h2>
+            <ul>
+                ${songs.map((song, index) => `
+                    <li style="animation-delay: ${index * 0.1}s;">
+                        <img src="${song.image}" alt="Album cover">
+                        <a href="${song.url}" target="_blank">${song.name} by ${song.artist}</a>
+                    </li>
+                `).join('')}
+            </ul>
+        `;
     }
 
     document.getElementById('mood-form').onsubmit = function(e) {
