@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Music Mood Picker</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        /* General Reset */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #121212;
+            color: #fff;
+            min-height: 100vh;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .main-container {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .picker-container {
+            text-align: center;
+            max-width: 600px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        h1 {
+            font-size: 48px;
+            font-weight: bold;
+            background: linear-gradient(45deg, #1DB954, #1ED760);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 20px;
+        }
+
+        p {
+            font-size: 18px;
+            margin-bottom: 30px;
+            color: #ccc;
+        }
+
+        form {
+            position: relative;
+            width: 100%;
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        .input-container {
+            position: relative;
+        }
+
+        input[type="text"] {
+            padding: 18px;
+            font-size: 18px;
+            width: 100%;
+            border-radius: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            background-color: rgba(255, 255, 255, 0.05);
+            color: #fff;
+            outline: none;
+            padding-right: 150px;
+        }
+
+        button {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            padding: 10px 20px;
+            font-size: 16px;
+            border-radius: 25px;
+            border: none;
+            background: linear-gradient(45deg, #1DB954, #1ED760);
+            color: #fff;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        button:hover {
+            background: linear-gradient(45deg, #1ED760, #1DB954);
+        }
+
+        /* Song List Container */
+        .songs-container {
+            margin-top: 40px;
+            width: 100%;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        ul {
+            list-style-type: none;
+            margin: 0;
+            padding: 0;
+            width: 100%;
+        }
+
+        li {
+            background-color: #1E1E1E;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            animation: fadeIn 0.5s ease forwards;
+            opacity: 0;
+        }
+
+        li img {
+            width: 50px;
+            height: 50px;
+            border-radius: 10px;
+            margin-right: 15px;
+        }
+
+        li a {
+            color: #1ED760;
+            font-size: 18px;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        li a:hover {
+            color: #1DB954;
+        }
+
+        /* Animation for song list items */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="main-container">
+    <!-- Centered Music Mood Picker -->
+    <div class="picker-container">
+        <h1>Music Mood Picker</h1>
+        <p>Enter your mood and get 10 song recommendations!</p>
+
+        <!-- Form for user input -->
+        <form action="/recommend" method="POST">
+            <div class="input-container">
+                <input type="text" id="mood" name="mood" placeholder="Enter your mood" required>
+                <button type="submit">Get Started</button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Song recommendations -->
+    {% if songs %}
+    <div class="songs-container">
+        <ul>
+            {% for song in songs %}
+            <li style="animation-delay: {{ (loop.index0 * 0.1) | round(1) }}s;">
+                <img src="{{ song.image }}" alt="Song Image">
+                <a href="{{ song.url }}" target="_blank">{{ song.name }} by {{ song.artist }}</a>
+            </li>
+            {% endfor %}
+        </ul>
+    </div>
+    {% endif %}
+</div>
+
+</body>
+</html>
