@@ -264,9 +264,9 @@
     <div class="songs-container" id="songs-container"></div>
 </div>
 
+
 <script>
     let sessionHistory = [];
-    let modelReady = false;
 
     function toggleSidebar() {
         const sidebar = document.getElementById('sidebar');
@@ -279,10 +279,12 @@
             sidebarToggle.querySelector('span:nth-child(1)').style.transform = 'rotate(-45deg) translate(-5px, 6px)';
             sidebarToggle.querySelector('span:nth-child(2)').style.opacity = '0';
             sidebarToggle.querySelector('span:nth-child(3)').style.transform = 'rotate(45deg) translate(-5px, -6px)';
+            sidebarToggle.style.right = '320px';
         } else {
             sidebarToggle.querySelector('span:nth-child(1)').style.transform = 'none';
             sidebarToggle.querySelector('span:nth-child(2)').style.opacity = '1';
             sidebarToggle.querySelector('span:nth-child(3)').style.transform = 'none';
+            sidebarToggle.style.right = '20px';
         }
     }
 
@@ -299,16 +301,19 @@
     function updateHistoryDisplay() {
         const historyList = document.getElementById('history-list');
         historyList.innerHTML = '';
-        sessionHistory.forEach((mood) => {
+        sessionHistory.forEach((entry, index) => {
             const historyItem = document.createElement('div');
             historyItem.className = 'history-item';
-            historyItem.textContent = mood;
+            historyItem.textContent = `${entry.mood} (${entry.analyzed_mood})`;
             historyItem.onclick = () => {
-                document.getElementById('mood').value = mood;
-                submitMood(mood);
+                displaySavedSongs(entry);
             };
             historyList.appendChild(historyItem);
         });
+    }
+
+    function displaySavedSongs(entry) {
+        updateSongsDisplay(entry.mood, entry.analyzed_mood, entry.songs);
     }
 
     function clearHistory() {
@@ -322,11 +327,6 @@
     }
 
     function submitMood(mood) {
-        if (!modelReady) {
-            alert("The sentiment analysis model is still loading. Please try again in a moment.");
-            return;
-        }
-
         const loadingMessage = document.getElementById('loading-message');
         loadingMessage.textContent = "Getting recommendations...";
 
@@ -340,12 +340,8 @@
             .then(response => response.json())
             .then(data => {
                 loadingMessage.textContent = "";
-                if (data.error === "Model not ready") {
-                    alert("The sentiment analysis model is still loading. Please try again in a moment.");
-                } else {
-                    updateSongsDisplay(data.mood, data.analyzed_mood, data.songs);
-                    fetchHistory();
-                }
+                updateSongsDisplay(data.mood, data.analyzed_mood, data.songs);
+                fetchHistory();
             })
             .catch(error => {
                 console.error('Error:', error);
@@ -368,35 +364,13 @@
             `;
     }
 
-    function checkModelStatus() {
-        fetch('/model_status')
-            .then(response => response.json())
-            .then(data => {
-                modelReady = data.ready;
-                const submitButton = document.getElementById('submit-button');
-                const loadingMessage = document.getElementById('loading-message');
-                if (modelReady) {
-                    submitButton.disabled = false;
-                    loadingMessage.textContent = "";
-                } else {
-                    submitButton.disabled = true;
-                    loadingMessage.textContent = "Loading sentiment analysis model...";
-                    setTimeout(checkModelStatus, 5000);  // Check again in 5 seconds
-                }
-            })
-            .catch(error => console.error('Error:', error));
-    }
-
     document.getElementById('mood-form').onsubmit = function(e) {
         e.preventDefault();
         const mood = document.getElementById('mood').value;
         submitMood(mood);
     };
 
-    document.addEventListener('DOMContentLoaded', () => {
-        fetchHistory();
-        checkModelStatus();
-    });
+    document.addEventListener('DOMContentLoaded', fetchHistory);
 </script>
 </body>
 </html>
