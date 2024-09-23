@@ -9,14 +9,14 @@ from difflib import get_close_matches
 load_dotenv()
 
 # Initialize Cohere client
-cohere_api_key = os.getenv('COHERE_API_KEY')  # Replace with your real API key environment variable
+cohere_api_key = os.getenv('1kSZ1GLeZYKomOqyTaKmSAnSYiMAhJk3TSKBUVxw')  # Replace with your real API key environment variable
 co = cohere.Client(cohere_api_key)
 
 print("Starting application...")
 
 # Set environment variables
-os.environ['SPOTIFY_CLIENT_ID'] = 'your_spotify_client_id'
-os.environ['SPOTIFY_CLIENT_SECRET'] = 'your_spotify_client_secret'
+os.environ['SPOTIFY_CLIENT_ID'] = 'c4d974cf20524d5e99a7cdbb426c08f2'
+os.environ['SPOTIFY_CLIENT_SECRET'] = 'fc8553edafaa48ffa2504a646554d7cd'
 
 app = Flask(__name__)
 app.secret_key = 'your_secret_key_here'  # Set this to a random secret string
