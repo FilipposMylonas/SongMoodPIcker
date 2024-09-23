@@ -5,6 +5,8 @@ import spotipy
 import cohere
 from dotenv import load_dotenv
 from difflib import get_close_matches
+import random
+
 
 load_dotenv()
 
@@ -47,9 +49,12 @@ MOOD_TO_ATTRIBUTES = {
 }
 
 # Function to classify mood using Cohere's generation API
+import random
+
+# Function to classify mood using Cohere's generation API with 3 best words
 def classify_mood_with_generation(user_input):
-    prompt = f"""How would you classify this input: '{user_input}'? 
-    Choose one from the following and only answer with that word: happy, sad, relaxed, energetic, mysterious, romantic, angry, joyful, melancholic, hopeful, 
+    prompt = f"""Given this input: '{user_input}', what are the three best words to describe this mood?
+    Choose three from the following, separated by commas: happy, sad, relaxed, energetic, mysterious, romantic, angry, joyful, melancholic, hopeful, 
     anxious, nostalgic, determined, lonely, excited, calm, inspired, frustrated, motivated, confident, peaceful, heartbroken, 
     angsty, playful, curious, grateful, reflective, dreamy, euphoric, serene, restless, indifferent, rebellious, adventurous, 
     gloomy, empowered, nervous, tranquil, surprised, bored, disappointed, satisfied, jealous, content, bitter, optimistic, 
@@ -62,40 +67,49 @@ def classify_mood_with_generation(user_input):
             max_tokens=10,
             temperature=0.2,  # Lower temperature for more deterministic responses
         )
-        classified_mood = response.generations[0].text.strip().lower()
+        classified_moods = response.generations[0].text.strip().lower().split(", ")
 
         valid_moods = list(MOOD_TO_ATTRIBUTES.keys())  # Only keep moods we handle
-        if classified_mood in valid_moods:
-            return classified_mood
+        filtered_moods = [mood for mood in classified_moods if mood in valid_moods]
+        if len(filtered_moods) == 3:
+            return filtered_moods
         else:
-            print(f"Invalid mood classified: '{classified_mood}'. Finding closest match...")
-            closest_mood = get_close_matches(classified_mood, valid_moods, n=1, cutoff=0.2)
-            if closest_mood:
-                return closest_mood[0]
-            return "happy"  # Default fallback mood
+            return random.sample(valid_moods, 3)  # Fallback to random moods if anything fails
 
     except Exception as e:
         print(f"Error in mood classification: {str(e)}")
-        return "happy"  # Fallback to 'happy' if something goes wrong
+        return random.sample(valid_moods, 3)  # Fallback to 3 random moods if something goes wrong
 
-# Function to get recommendations based on classified mood
-def get_spotify_recommendations_for_mood(mood):
-    mood_attributes = MOOD_TO_ATTRIBUTES.get(mood, {'energy': 0.5, 'valence': 0.5, 'genre': 'indie'})
-    try:
-        results = sp.recommendations(seed_genres=[mood_attributes['genre']],
-                                     limit=10,
-                                     target_energy=mood_attributes['energy'],
-                                     target_valence=mood_attributes['valence'])
-        return [{'name': track['name'],
-                 'artist': track['artists'][0]['name'],
-                 'url': track['external_urls']['spotify'],
-                 'image': track['album']['images'][0]['url'] if track['album']['images'] else "https://via.placeholder.com/50"
-                 } for track in results['tracks']]
-    except Exception as e:
-        print(f"Error getting Spotify recommendations: {str(e)}")
-        return []
+# Function to randomize energy and valence and fetch Spotify recommendations
+def get_spotify_recommendations_for_moods(moods):
+    all_recommendations = []
 
-# Main route to recommend songs based on user mood
+    for mood in moods:
+        mood_attributes = MOOD_TO_ATTRIBUTES.get(mood, {'energy': 0.5, 'valence': 0.5, 'genre': 'indie'})
+
+        # Randomize energy and valence values
+        randomized_energy = max(0.0, min(1.0, mood_attributes['energy'] + random.uniform(-0.5, 0.5)))
+        randomized_valence = max(0.0, min(1.0, mood_attributes['valence'] + random.uniform(-0.5, 0.5)))
+
+        try:
+            results = sp.recommendations(seed_genres=[mood_attributes['genre']],
+                                         limit=10,
+                                         target_energy=randomized_energy,
+                                         target_valence=randomized_valence)
+
+            recommendations = [{'name': track['name'],
+                                'artist': track['artists'][0]['name'],
+                                'url': track['external_urls']['spotify'],
+                                'image': track['album']['images'][0]['url'] if track['album']['images'] else "https://via.placeholder.com/50"
+                                } for track in results['tracks']]
+            all_recommendations.extend(recommendations)
+
+        except Exception as e:
+            print(f"Error getting Spotify recommendations: {str(e)}")
+
+    return all_recommendations
+
+# Main route to recommend songs based on user mood with three best words and random energy/valence
 @app.route('/recommend', methods=['POST'])
 def recommend():
     user_input = request.form['mood']
@@ -104,26 +118,26 @@ def recommend():
     if 'history' not in session:
         session['history'] = []
 
-    # Use Cohere to classify the mood from user input
-    classified_mood = classify_mood_with_generation(user_input)
-    print(f"Classified mood: {classified_mood}")
+    # Use Cohere to classify the mood from user input (get 3 words)
+    classified_moods = classify_mood_with_generation(user_input)
+    print(f"Classified moods: {classified_moods}")
 
-    # Get Spotify recommendations based on the classified mood
-    songs = get_spotify_recommendations_for_mood(classified_mood)
+    # Get Spotify recommendations based on the classified moods with random energy/valence
+    songs = get_spotify_recommendations_for_moods(classified_moods)
 
-    # Store the classified mood and recommendations in session history
+    # Store the classified moods and recommendations in session history
     session['history'].insert(0, {
         'mood': user_input,
-        'classified_mood': classified_mood,
+        'classified_moods': classified_moods,
         'songs': songs
     })
     session['history'] = session['history'][:10]  # Keep only the latest 10 entries
     session.modified = True
 
-    # Return the classified mood and recommendations to the client
+    # Return the classified moods and recommendations to the client
     return jsonify({
         'mood': user_input,
-        'classified_mood': classified_mood,
+        'classified_moods': classified_moods,
         'songs': songs
     })
 
