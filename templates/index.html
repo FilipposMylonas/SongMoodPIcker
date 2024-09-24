@@ -6,12 +6,14 @@
     <title>Music Mood Picker</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
     <style>
+        /* reset margin and padding for all elements */
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
 
+        /* style the body to set font and background */
         body {
             font-family: 'Inter', sans-serif;
             background-color: #121212;
@@ -20,6 +22,7 @@
             display: flex;
         }
 
+        /* set main container layout */
         .main-container {
             flex-grow: 1;
             padding: 20px;
@@ -30,12 +33,14 @@
             justify-content: center;
         }
 
+        /* center content and style header */
         .picker-container {
             text-align: center;
             max-width: 600px;
             width: 100%;
         }
 
+        /* style for h1 title with gradient text */
         h1 {
             font-size: 48px;
             font-weight: bold;
@@ -45,12 +50,14 @@
             margin-bottom: 20px;
         }
 
+        /* style for general paragraph text */
         p {
             font-size: 18px;
             margin-bottom: 30px;
             color: #ccc;
         }
 
+        /* set form layout and centering */
         form {
             position: relative;
             width: 100%;
@@ -58,10 +65,12 @@
             margin: 0 auto;
         }
 
+        /* wrap input field */
         .input-container {
             position: relative;
         }
 
+        /* style for mood input text box */
         input[type="text"] {
             padding: 18px;
             font-size: 18px;
@@ -74,6 +83,7 @@
             padding-right: 150px;
         }
 
+        /* style for submit button */
         button {
             position: absolute;
             right: 10px;
@@ -89,21 +99,25 @@
             transition: background 0.3s ease;
         }
 
+        /* hover effect for submit button */
         button:hover {
             background: linear-gradient(45deg, #1ED760, #1DB954);
         }
 
+        /* disabled button styling */
         button:disabled {
             background: #cccccc;
             cursor: not-allowed;
         }
 
+        /* songs container styling */
         .songs-container {
             margin-top: 40px;
             width: 100%;
             max-width: 600px;
         }
 
+        /* mood title styling */
         .mood-title {
             font-size: 24px;
             font-weight: bold;
@@ -112,11 +126,13 @@
             color: #1ED760;
         }
 
+        /* unordered list styling */
         ul {
             list-style-type: none;
             padding: 0;
         }
 
+        /* list item styling for song entries */
         li {
             background-color: #1E1E1E;
             padding: 15px;
@@ -128,6 +144,7 @@
             opacity: 0;
         }
 
+        /* song image styling */
         li img {
             width: 50px;
             height: 50px;
@@ -135,6 +152,7 @@
             margin-right: 15px;
         }
 
+        /* link styling for song names */
         li a {
             color: #1ED760;
             font-size: 18px;
@@ -142,15 +160,18 @@
             transition: color 0.3s ease;
         }
 
+        /* hover effect for song links */
         li a:hover {
             color: #1DB954;
         }
 
+        /* fade-in animation for song list items */
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(20px); }
             to { opacity: 1; transform: translateY(0); }
         }
 
+        /* sidebar for history of moods and songs */
         .sidebar {
             position: fixed;
             right: -300px;
@@ -164,15 +185,18 @@
             z-index: 1000;
         }
 
+        /* open state of the sidebar */
         .sidebar.open {
             right: 0;
         }
 
+        /* sidebar header styling */
         .sidebar h2 {
             color: #1ED760;
             margin-bottom: 20px;
         }
 
+        /* styling for individual history items */
         .history-item {
             background-color: #2a2a2a;
             padding: 10px;
@@ -181,10 +205,12 @@
             cursor: pointer;
         }
 
+        /* hover effect for history items */
         .history-item:hover {
             background-color: #3a3a3a;
         }
 
+        /* toggle button for sidebar */
         .sidebar-toggle {
             position: fixed;
             right: 20px;
@@ -204,6 +230,7 @@
             align-items: center;
         }
 
+        /* toggle button bars */
         .sidebar-toggle span {
             display: block;
             width: 25px;
@@ -213,6 +240,7 @@
             transition: 0.3s;
         }
 
+        /* button for clearing history */
         .clear-history {
             background-color: #ff4136;
             color: white;
@@ -224,10 +252,12 @@
             width: 100%;
         }
 
+        /* hover effect for clear history button */
         .clear-history:hover {
             background-color: #ff5147;
         }
 
+        /* loading message styling */
         #loading-message {
             color: #1ED760;
             font-size: 18px;
@@ -267,6 +297,7 @@
 <script>
     let sessionHistory = [];
 
+    // function to toggle sidebar visibility and change button appearance
     function toggleSidebar() {
         const sidebar = document.getElementById('sidebar');
         const mainContainer = document.getElementById('main-container');
@@ -287,6 +318,7 @@
         }
     }
 
+    // function to fetch history from server and update display
     function fetchHistory() {
         fetch('/history')
             .then(response => response.json())
@@ -297,6 +329,7 @@
             .catch(error => console.error('Error:', error));
     }
 
+    // function to update the displayed history list
     function updateHistoryDisplay() {
         const historyList = document.getElementById('history-list');
         historyList.innerHTML = '';
@@ -305,44 +338,31 @@
             historyItem.className = 'history-item';
             historyItem.textContent = entry.mood;
             historyItem.onclick = () => {
-                displaySavedSongs(entry.mood);
+                displaySavedSongs(entry);
             };
             historyList.appendChild(historyItem);
         });
     }
 
-    function displaySavedSongs(mood) {
-        const loadingMessage = document.getElementById('loading-message');
-        loadingMessage.textContent = "Loading saved recommendations...";
-
-        fetch('/recommend', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded',
-            },
-            body: `mood=${encodeURIComponent(mood)}`
-        })
-            .then(response => response.json())
-            .then(data => {
-                loadingMessage.textContent = "";
-                updateSongsDisplay(data.mood, data.songs);
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                loadingMessage.textContent = "An error occurred. Please try again.";
-            });
+    // function to display songs from a selected history entry
+    function displaySavedSongs(entry) {
+        updateSongsDisplay(entry.mood, entry.songs);
     }
 
+    // function to clear the session history
     function clearHistory() {
         fetch('/clear_history', { method: 'POST' })
             .then(response => response.json())
             .then(data => {
                 sessionHistory = [];
                 updateHistoryDisplay();
+                // clear displayed songs
+                document.getElementById('songs-container').innerHTML = '';
             })
             .catch(error => console.error('Error:', error));
     }
 
+    // function to submit mood and get song recommendations
     function submitMood(mood) {
         const loadingMessage = document.getElementById('loading-message');
         loadingMessage.textContent = "Getting recommendations...";
@@ -358,7 +378,7 @@
             .then(data => {
                 loadingMessage.textContent = "";
                 updateSongsDisplay(data.mood, data.songs);
-                fetchHistory();  // Update history after new recommendation
+                fetchHistory();  // update history after new recommendation
             })
             .catch(error => {
                 console.error('Error:', error);
@@ -366,6 +386,7 @@
             });
     }
 
+    // function to update the displayed list of recommended songs
     function updateSongsDisplay(mood, songs) {
         const songsContainer = document.getElementById('songs-container');
         songsContainer.innerHTML = `
@@ -381,12 +402,14 @@
         `;
     }
 
+    // event listener for form submission
     document.getElementById('mood-form').onsubmit = function(e) {
         e.preventDefault();
         const mood = document.getElementById('mood').value;
         submitMood(mood);
     };
 
+    // fetch history when page loads
     document.addEventListener('DOMContentLoaded', fetchHistory);
 </script>
 </body>
