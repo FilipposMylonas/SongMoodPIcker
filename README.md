@@ -7,7 +7,7 @@
 ## Features
 
 - **Mood-based Song Recommendations**: Input your mood and receive 10 personalized song recommendations from Spotify.
-- **Cohere NLP Integration**: Use Cohere to classify user input into moods.
+- **Cohere AI Integration**: Use Cohere to classify user input into moods.
 - **Spotify API Integration**: Fetch song recommendations directly from Spotify based on mood attributes (energy, valence, genre).
 - **History Tracking**: View your past mood inputs and recommendations.
 - **Clear History**: Easily clear previous entries from your session history.
