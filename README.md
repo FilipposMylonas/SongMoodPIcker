@@ -28,15 +28,8 @@
    
 3. **Install dependencies**:
    ```bash
-   pip install -r requirements.txt
+   pip install flask requests python-dotenv spotipy cohere
 
-4. **Set up environment variables**:
-Create a .env file in the project root and add your API keys:
-   ```bash
-   COHERE_API_KEY=your-cohere-api-key
-   SPOTIFY_CLIENT_ID=your-spotify-client-id
-   SPOTIFY_CLIENT_SECRET=your-spotify-client-secret
-   
 5. **Run the application** :
    ```bash
    python app.py
