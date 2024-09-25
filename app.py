@@ -57,7 +57,6 @@ MOOD_TO_ATTRIBUTES = {
     'excited': {'energy': 0.9, 'valence': 0.9, 'genre': 'edm'},
     'calm': {'energy': 0.2, 'valence': 0.8, 'genre': 'ambient'},
     'frustrated': {'energy': 0.8, 'valence': 0.3, 'genre': 'punk'},
-    #  additional moods can be added here
 }
 
 
