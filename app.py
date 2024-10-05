@@ -129,6 +129,9 @@ def recommend():
     user_input = request.form['mood']
     print(f"Received mood input: {user_input}")
 
+    if user_input == 'random':
+        user_input = random.choice(list(MOOD_TO_ATTRIBUTES.keys()))  # Pick a random mood
+
     if 'history' not in session:
         session['history'] = []
         print("Initialized new session history.")
