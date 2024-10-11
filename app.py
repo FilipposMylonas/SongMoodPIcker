@@ -59,7 +59,6 @@ MOOD_TO_ATTRIBUTES = {
     'frustrated': {'energy': 0.8, 'valence': 0.3, 'genre': 'punk'},
 }
 
-
 # classify mood based on user input using cohere's generation api
 def classify_mood_with_generation(user_input):
     prompt = f"""Given this input: '{user_input}', what are the three best words to describe this mood?
@@ -85,7 +84,6 @@ Choose three from the following, separated by commas (ONLY PASTE THE WORDS, NOTH
     except Exception as e:
         print(f"Error in mood classification: {str(e)}")
         return random.sample(valid_moods, 3)  # fallback to 3 random moods in case of error
-
 
 # fetch spotify recommendations based on the classified moods
 def get_spotify_recommendations_for_moods(moods):
@@ -121,7 +119,6 @@ def get_spotify_recommendations_for_moods(moods):
             print(f"Error getting Spotify recommendations: {str(e)}")
 
     return all_recommendations
-
 
 # route to handle mood-based music recommendations
 @app.route('/recommend', methods=['POST'])
@@ -162,14 +159,12 @@ def recommend():
         'songs': songs
     })
 
-
 # route to get the history of mood inputs and song recommendations
 @app.route('/history', methods=['GET'])
 def get_history():
     history = session.get('history', [])
     print(f"Returning history with {len(history)} entries.")
     return jsonify(history)
-
 
 # route to clear the session history
 @app.route('/clear_history', methods=['POST'])
@@ -179,7 +174,6 @@ def clear_history():
     print("History cleared.")
     return jsonify({"message": "History cleared successfully"})
 
-
 # render the main page
 @app.route('/')
 def index():
@@ -187,7 +181,6 @@ def index():
     if 'history' not in session:
         session['history'] = []
     return render_template('index.html')
-
 
 # start the flask server when the script is run
 if __name__ == '__main__':

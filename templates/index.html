@@ -6,14 +6,14 @@
     <title>Music Mood Picker</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
     <style>
-        /* reset margin and padding for all elements */
+        /* Reset margin and padding for all elements */
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
 
-        /* style the body to set font and background */
+        /* Style the body to set font and background */
         body {
             font-family: 'Inter', sans-serif;
             background-color: #121212;
@@ -22,7 +22,7 @@
             display: flex;
         }
 
-        /* set main container layout */
+        /* Set main container layout */
         .main-container {
             flex-grow: 1;
             padding: 20px;
@@ -33,14 +33,14 @@
             justify-content: center;
         }
 
-        /* center content and style header */
+        /* Center content and style header */
         .picker-container {
             text-align: center;
             max-width: 600px;
             width: 100%;
         }
 
-        /* style for h1 title with gradient text */
+        /* Style for h1 title with gradient text */
         h1 {
             font-size: 48px;
             font-weight: bold;
@@ -72,14 +72,14 @@
             transform: scale(1.3);
         }
 
-        /* style for general paragraph text */
+        /* Style for general paragraph text */
         p {
             font-size: 18px;
             margin-bottom: 30px;
             color: #ccc;
         }
 
-        /* set form layout and centering */
+        /* Set form layout and centering */
         form {
             position: relative;
             width: 100%;
@@ -87,12 +87,12 @@
             margin: 0 auto;
         }
 
-        /* wrap input field */
+        /* Wrap input field */
         .input-container {
             position: relative;
         }
 
-        /* style for mood input text box */
+        /* Style for mood input text box */
         input[type="text"] {
             padding: 18px;
             font-size: 18px;
@@ -105,7 +105,7 @@
             padding-right: 150px;
         }
 
-        /* style for submit button */
+        /* Style for submit button */
         button[type="submit"] {
             position: absolute;
             right: 10px;
@@ -121,19 +121,19 @@
             transition: background 0.3s ease;
         }
 
-        /* hover effect for submit button */
+        /* Hover effect for submit button */
         button[type="submit"]:hover {
             background: linear-gradient(45deg, #1ED760, #1DB954);
         }
 
-        /* songs container styling */
+        /* Songs container styling */
         .songs-container {
             margin-top: 40px;
             width: 100%;
             max-width: 600px;
         }
 
-        /* mood title styling */
+        /* Mood title styling */
         .mood-title {
             font-size: 24px;
             font-weight: bold;
@@ -142,13 +142,13 @@
             color: #1ED760;
         }
 
-        /* unordered list styling */
+        /* Unordered list styling */
         ul {
             list-style-type: none;
             padding: 0;
         }
 
-        /* list item styling for song entries */
+        /* List item styling for song entries */
         li {
             background-color: #1E1E1E;
             padding: 15px;
@@ -160,7 +160,7 @@
             opacity: 0;
         }
 
-        /* song image styling */
+        /* Song image styling */
         li img {
             width: 50px;
             height: 50px;
@@ -168,7 +168,7 @@
             margin-right: 15px;
         }
 
-        /* link styling for song names */
+        /* Link styling for song names */
         li a {
             color: #1ED760;
             font-size: 18px;
@@ -176,18 +176,18 @@
             transition: color 0.3s ease;
         }
 
-        /* hover effect for song links */
+        /* Hover effect for song links */
         li a:hover {
             color: #1DB954;
         }
 
-        /* fade-in animation for song list items */
+        /* Fade-in animation for song list items */
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(20px); }
             to { opacity: 1; transform: translateY(0); }
         }
 
-        /* sidebar for history of moods and songs */
+        /* Sidebar for history of moods and songs */
         .sidebar {
             position: fixed;
             right: -300px;
@@ -201,18 +201,18 @@
             z-index: 1000;
         }
 
-        /* open state of the sidebar */
+        /* Open state of the sidebar */
         .sidebar.open {
             right: 0;
         }
 
-        /* sidebar header styling */
+        /* Sidebar header styling */
         .sidebar h2 {
             color: #1ED760;
             margin-bottom: 20px;
         }
 
-        /* styling for individual history items */
+        /* Styling for individual history items */
         .history-item {
             background-color: #2a2a2a;
             padding: 10px;
@@ -221,12 +221,12 @@
             cursor: pointer;
         }
 
-        /* hover effect for history items */
+        /* Hover effect for history items */
         .history-item:hover {
             background-color: #3a3a3a;
         }
 
-        /* toggle button for sidebar */
+        /* Toggle button for sidebar */
         .sidebar-toggle {
             position: fixed;
             right: 20px;
@@ -246,7 +246,7 @@
             align-items: center;
         }
 
-        /* toggle button bars */
+        /* Toggle button bars */
         .sidebar-toggle span {
             display: block;
             width: 25px;
@@ -256,7 +256,7 @@
             transition: 0.3s;
         }
 
-        /* button for clearing history */
+        /* Button for clearing history */
         .clear-history {
             background-color: #ff4136;
             color: white;
@@ -268,20 +268,129 @@
             width: 100%;
         }
 
-        /* hover effect for clear history button */
+        /* Hover effect for clear history button */
         .clear-history:hover {
             background-color: #ff5147;
         }
 
-        /* loading message styling */
+        /* Loading message styling */
         #loading-message {
             color: #1ED760;
             font-size: 18px;
             margin-top: 20px;
         }
+
+        /* Position the mode toggle in the top left corner */
+        .mode-toggle {
+            position: fixed;
+            left: 20px;
+            top: 20px;
+            z-index: 1001;
+        }
+
+        /* The switch - the box around the slider */
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 60px;
+            height: 30px;
+        }
+
+        /* Hide default HTML checkbox */
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        /* The slider */
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            background-color: #ccc;
+            border-radius: 34px;
+            transition: .4s;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            background-color: white;
+            height: 26px;
+            width: 26px;
+            left: 2px;
+            bottom: 2px;
+            border-radius: 50%;
+            transition: .4s;
+        }
+
+        /* Text inside the switch */
+        .switch-text {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            text-align: center;
+            line-height: 30px;
+            font-size: 12px;
+            font-weight: bold;
+            color: black;
+            transition: .4s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Adjust text position */
+        .switch input:checked + .slider .switch-text {
+            transform: translateX(0);
+        }
+
+        .switch input:not(:checked) + .slider .switch-text {
+            transform: translateX(0);
+        }
+
+        /* Checked state */
+        .switch input:checked + .slider {
+            background-color: #1DB954;
+        }
+
+        .switch input:checked + .slider:before {
+            transform: translateX(30px);
+        }
+
+        /* Adjust text color based on background */
+        .switch input:checked + .slider .switch-text {
+            color: black;
+        }
+
+        .switch input:not(:checked) + .slider .switch-text {
+            color: black;
+        }
+
+        /* Rounded slider */
+        .slider.round {
+            border-radius: 34px;
+        }
+
+        .slider.round:before {
+            border-radius: 50%;
+        }
     </style>
 </head>
 <body>
+<div class="mode-toggle">
+    <label class="switch">
+        <input type="checkbox" id="hardcoded-toggle" onchange="toggleMode()">
+        <span class="slider round">
+            <span class="switch-text" id="switch-text">AI</span>
+        </span>
+    </label>
+</div>
+
 <div class="sidebar-toggle" onclick="toggleSidebar()">
     <span></span>
     <span></span>
@@ -325,8 +434,82 @@
 
 <script>
     let sessionHistory = [];
+    let isHardCodedMode = false;
 
-    // function to toggle sidebar visibility and change button appearance
+    const hardcodedSongs = {
+        'happy': [
+            {
+                'name': 'Happy',
+                'artist': 'Pharrell Williams',
+                'url': 'https://open.spotify.com/track/60nZcImufyMA1MKQY3dcCH',
+                'image': 'https://i.scdn.co/image/ab67616d0000b273cdefc2e829c9d31f8a5a71c1'
+            },
+            {
+                'name': 'Best Day Of My Life',
+                'artist': 'American Authors',
+                'url': 'https://open.spotify.com/track/0fKTyh9lMYeY9fZct8xgIO',
+                'image': 'https://i.scdn.co/image/ab67616d0000b2734eae0a2dfd3a0d1190294316'
+            }
+        ],
+        'sad': [
+            {
+                'name': 'Someone Like You',
+                'artist': 'Adele',
+                'url': 'https://open.spotify.com/track/4kflIGfjdZJW4ot2ioixTB',
+                'image': 'https://i.scdn.co/image/ab67616d0000b2730ff6b1cf38b942eabfb4ee6d'
+            },
+            {
+                'name': 'Fix You',
+                'artist': 'Coldplay',
+                'url': 'https://open.spotify.com/track/0X8egG2Cf2uRkl5p3ucB5q',
+                'image': 'https://i.scdn.co/image/ab67616d0000b273f0e1fae7df199c49e12a9901'
+            }
+        ],
+        'angry': [
+            {
+                'name': 'Killing In The Name',
+                'artist': 'Rage Against The Machine',
+                'url': 'https://open.spotify.com/track/5lbpWzIbbqWXLA7CCBFtVj',
+                'image': 'https://i.scdn.co/image/ab67616d0000b2736f3ee6cc8df1fe01fa1d2f18'
+            },
+            {
+                'name': 'Break Stuff',
+                'artist': 'Limp Bizkit',
+                'url': 'https://open.spotify.com/track/2VPX1jBf6vVmRbZsQbD3Y7',
+                'image': 'https://i.scdn.co/image/ab67616d0000b2739f3b8c2f576e0f6556a0b3c1'
+            }
+        ],
+        'romantic': [
+            {
+                'name': 'Thinking Out Loud',
+                'artist': 'Ed Sheeran',
+                'url': 'https://open.spotify.com/track/34gCuhDGsG4bRPIf9bb02f',
+                'image': 'https://i.scdn.co/image/ab67616d0000b273f8c82d9fb711d9e5aeebc5b1'
+            },
+            {
+                'name': 'All of Me',
+                'artist': 'John Legend',
+                'url': 'https://open.spotify.com/track/3U4isOIWM3V5gU4lPLTG7K',
+                'image': 'https://i.scdn.co/image/ab67616d0000b27330d777c20baf93e0ce488a01'
+            }
+        ],
+        'random': [
+            {
+                'name': 'Bohemian Rhapsody',
+                'artist': 'Queen',
+                'url': 'https://open.spotify.com/track/7tFiyTwD0nx5a1eklYtX2J',
+                'image': 'https://i.scdn.co/image/ab67616d0000b273f3db188defd90d40c31dd1fe'
+            },
+            {
+                'name': 'Shape of You',
+                'artist': 'Ed Sheeran',
+                'url': 'https://open.spotify.com/track/7qiZfU4dY1lWllzX7mPBI3',
+                'image': 'https://i.scdn.co/image/ab67616d0000b273835ddf4b3f8225c6356a1837'
+            }
+        ]
+    };
+
+    // Function to toggle sidebar visibility and change button appearance
     function toggleSidebar() {
         const sidebar = document.getElementById('sidebar');
         const mainContainer = document.getElementById('main-container');
@@ -347,7 +530,7 @@
         }
     }
 
-    // function to fetch history from server and update display
+    // Function to fetch history from server and update display
     function fetchHistory() {
         fetch('/history')
             .then(response => response.json())
@@ -358,7 +541,7 @@
             .catch(error => console.error('Error:', error));
     }
 
-    // function to update the displayed history list
+    // Function to update the displayed history list
     function updateHistoryDisplay() {
         const historyList = document.getElementById('history-list');
         historyList.innerHTML = '';
@@ -373,49 +556,54 @@
         });
     }
 
-    // function to display songs from a selected history entry
+    // Function to display songs from a selected history entry
     function displaySavedSongs(entry) {
         updateSongsDisplay(entry.mood, entry.songs);
     }
 
-    // function to clear the session history
+    // Function to clear the session history
     function clearHistory() {
         fetch('/clear_history', { method: 'POST' })
             .then(response => response.json())
             .then(data => {
                 sessionHistory = [];
                 updateHistoryDisplay();
-                // clear displayed songs
+                // Clear displayed songs
                 document.getElementById('songs-container').innerHTML = '';
             })
             .catch(error => console.error('Error:', error));
     }
 
-    // function to submit mood and get song recommendations
+    // Function to submit mood and get song recommendations
     function submitMood(mood) {
-        const loadingMessage = document.getElementById('loading-message');
-        loadingMessage.textContent = "Getting recommendations...";
+        if (isHardCodedMode) {
+            let songs = hardcodedSongs[mood] || [];
+            updateSongsDisplay(mood, songs);
+        } else {
+            const loadingMessage = document.getElementById('loading-message');
+            loadingMessage.textContent = "Getting recommendations...";
 
-        fetch('/recommend', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded',
-            },
-            body: `mood=${encodeURIComponent(mood)}`
-        })
-            .then(response => response.json())
-            .then(data => {
-                loadingMessage.textContent = "";
-                updateSongsDisplay(data.mood, data.songs);
-                fetchHistory();  // update history after new recommendation
+            fetch('/recommend', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: `mood=${encodeURIComponent(mood)}`
             })
-            .catch(error => {
-                console.error('Error:', error);
-                loadingMessage.textContent = "An error occurred. Please try again.";
-            });
+                .then(response => response.json())
+                .then(data => {
+                    loadingMessage.textContent = "";
+                    updateSongsDisplay(data.mood, data.songs);
+                    fetchHistory();  // Update history after new recommendation
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    loadingMessage.textContent = "An error occurred. Please try again.";
+                });
+        }
     }
 
-    // function to update the displayed list of recommended songs
+    // Function to update the displayed list of recommended songs
     function updateSongsDisplay(mood, songs) {
         const songsContainer = document.getElementById('songs-container');
         songsContainer.innerHTML = `
@@ -431,15 +619,44 @@
         `;
     }
 
-    // event listener for form submission
+    // Function to toggle between modes
+    function toggleMode() {
+        isHardCodedMode = document.getElementById('hardcoded-toggle').checked;
+        const switchText = document.getElementById('switch-text');
+        // Adjust the UI accordingly
+        if (isHardCodedMode) {
+            // Change text to 'Non-AI'
+            switchText.textContent = 'Non-AI';
+            // Hide the manual mood input form
+            document.getElementById('mood-form').style.display = 'none';
+            // Clear any displayed songs
+            document.getElementById('songs-container').innerHTML = '';
+            // Clear the history
+            sessionHistory = [];
+            updateHistoryDisplay();
+        } else {
+            // Change text to 'AI'
+            switchText.textContent = 'AI';
+            // Show the manual mood input form
+            document.getElementById('mood-form').style.display = 'block';
+            // Clear any displayed songs
+            document.getElementById('songs-container').innerHTML = '';
+            // Fetch history when switching back
+            fetchHistory();
+        }
+    }
+
+    // Event listener for form submission
     document.getElementById('mood-form').onsubmit = function(e) {
         e.preventDefault();
         const mood = document.getElementById('mood').value;
         submitMood(mood);
     };
 
-    // fetch history when page loads
-    document.addEventListener('DOMContentLoaded', fetchHistory);
+    // Fetch history when page loads
+    document.addEventListener('DOMContentLoaded', function() {
+        fetchHistory();
+    });
 </script>
 </body>
 </html>
