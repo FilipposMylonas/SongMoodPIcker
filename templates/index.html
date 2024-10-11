@@ -1,0 +1,662 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Music Mood Picker</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        /* Reset margin and padding for all elements */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        /* Style the body to set font and background */
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #121212;
+            color: #fff;
+            min-height: 100vh;
+            display: flex;
+        }
+
+        /* Set main container layout */
+        .main-container {
+            flex-grow: 1;
+            padding: 20px;
+            transition: margin-right 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Center content and style header */
+        .picker-container {
+            text-align: center;
+            max-width: 600px;
+            width: 100%;
+        }
+
+        /* Style for h1 title with gradient text */
+        h1 {
+            font-size: 48px;
+            font-weight: bold;
+            background: linear-gradient(45deg, #1DB954, #1ED760);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 20px;
+        }
+
+        /* Emoji button container centered under title */
+        .emoji-buttons-container {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+
+        /* Emoji button styling */
+        .emoji-button {
+            background: none;
+            border: none;
+            font-size: 32px;
+            margin: 0 10px;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+        }
+
+        /* Add hover effect */
+        .emoji-button:hover {
+            transform: scale(1.3);
+        }
+
+        /* Style for general paragraph text */
+        p {
+            font-size: 18px;
+            margin-bottom: 30px;
+            color: #ccc;
+        }
+
+        /* Set form layout and centering */
+        form {
+            position: relative;
+            width: 100%;
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        /* Wrap input field */
+        .input-container {
+            position: relative;
+        }
+
+        /* Style for mood input text box */
+        input[type="text"] {
+            padding: 18px;
+            font-size: 18px;
+            width: 100%;
+            border-radius: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            background-color: rgba(255, 255, 255, 0.05);
+            color: #fff;
+            outline: none;
+            padding-right: 150px;
+        }
+
+        /* Style for submit button */
+        button[type="submit"] {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            padding: 10px 20px;
+            font-size: 16px;
+            border-radius: 25px;
+            border: none;
+            background: linear-gradient(45deg, #1DB954, #1ED760);
+            color: #fff;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        /* Hover effect for submit button */
+        button[type="submit"]:hover {
+            background: linear-gradient(45deg, #1ED760, #1DB954);
+        }
+
+        /* Songs container styling */
+        .songs-container {
+            margin-top: 40px;
+            width: 100%;
+            max-width: 600px;
+        }
+
+        /* Mood title styling */
+        .mood-title {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 20px;
+            text-align: center;
+            color: #1ED760;
+        }
+
+        /* Unordered list styling */
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        /* List item styling for song entries */
+        li {
+            background-color: #1E1E1E;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            animation: fadeIn 0.5s ease forwards;
+            opacity: 0;
+        }
+
+        /* Song image styling */
+        li img {
+            width: 50px;
+            height: 50px;
+            border-radius: 10px;
+            margin-right: 15px;
+        }
+
+        /* Link styling for song names */
+        li a {
+            color: #1ED760;
+            font-size: 18px;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        /* Hover effect for song links */
+        li a:hover {
+            color: #1DB954;
+        }
+
+        /* Fade-in animation for song list items */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Sidebar for history of moods and songs */
+        .sidebar {
+            position: fixed;
+            right: -300px;
+            top: 0;
+            width: 300px;
+            height: 100%;
+            background-color: #1E1E1E;
+            transition: right 0.3s ease;
+            overflow-y: auto;
+            padding: 20px;
+            z-index: 1000;
+        }
+
+        /* Open state of the sidebar */
+        .sidebar.open {
+            right: 0;
+        }
+
+        /* Sidebar header styling */
+        .sidebar h2 {
+            color: #1ED760;
+            margin-bottom: 20px;
+        }
+
+        /* Styling for individual history items */
+        .history-item {
+            background-color: #2a2a2a;
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        /* Hover effect for history items */
+        .history-item:hover {
+            background-color: #3a3a3a;
+        }
+
+        /* Toggle button for sidebar */
+        .sidebar-toggle {
+            position: fixed;
+            right: 20px;
+            top: 20px;
+            background: rgba(255, 255, 255, 0.05);
+            color: white;
+            border: none;
+            padding: 10px;
+            border-radius: 50%;
+            cursor: pointer;
+            z-index: 1001;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* Toggle button bars */
+        .sidebar-toggle span {
+            display: block;
+            width: 25px;
+            height: 3px;
+            background-color: white;
+            margin: 2px 0;
+            transition: 0.3s;
+        }
+
+        /* Button for clearing history */
+        .clear-history {
+            background-color: #ff4136;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 20px;
+            width: 100%;
+        }
+
+        /* Hover effect for clear history button */
+        .clear-history:hover {
+            background-color: #ff5147;
+        }
+
+        /* Loading message styling */
+        #loading-message {
+            color: #1ED760;
+            font-size: 18px;
+            margin-top: 20px;
+        }
+
+        /* Position the mode toggle in the top left corner */
+        .mode-toggle {
+            position: fixed;
+            left: 20px;
+            top: 20px;
+            z-index: 1001;
+        }
+
+        /* The switch - the box around the slider */
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 60px;
+            height: 30px;
+        }
+
+        /* Hide default HTML checkbox */
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        /* The slider */
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            background-color: #ccc;
+            border-radius: 34px;
+            transition: .4s;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            background-color: white;
+            height: 26px;
+            width: 26px;
+            left: 2px;
+            bottom: 2px;
+            border-radius: 50%;
+            transition: .4s;
+        }
+
+        /* Text inside the switch */
+        .switch-text {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            text-align: center;
+            line-height: 30px;
+            font-size: 12px;
+            font-weight: bold;
+            color: black;
+            transition: .4s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Adjust text position */
+        .switch input:checked + .slider .switch-text {
+            transform: translateX(0);
+        }
+
+        .switch input:not(:checked) + .slider .switch-text {
+            transform: translateX(0);
+        }
+
+        /* Checked state */
+        .switch input:checked + .slider {
+            background-color: #1DB954;
+        }
+
+        .switch input:checked + .slider:before {
+            transform: translateX(30px);
+        }
+
+        /* Adjust text color based on background */
+        .switch input:checked + .slider .switch-text {
+            color: black;
+        }
+
+        .switch input:not(:checked) + .slider .switch-text {
+            color: black;
+        }
+
+        /* Rounded slider */
+        .slider.round {
+            border-radius: 34px;
+        }
+
+        .slider.round:before {
+            border-radius: 50%;
+        }
+    </style>
+</head>
+<body>
+<div class="mode-toggle">
+    <label class="switch">
+        <input type="checkbox" id="hardcoded-toggle" onchange="toggleMode()">
+        <span class="slider round">
+            <span class="switch-text" id="switch-text">AI</span>
+        </span>
+    </label>
+</div>
+
+<div class="sidebar-toggle" onclick="toggleSidebar()">
+    <span></span>
+    <span></span>
+    <span></span>
+</div>
+
+<div class="sidebar" id="sidebar">
+    <h2>History</h2>
+    <div id="history-list"></div>
+    <button class="clear-history" onclick="clearHistory()">Clear History</button>
+</div>
+
+<div class="main-container" id="main-container">
+    <div class="picker-container">
+        <h1>Music Mood Picker</h1>
+
+        <!-- Emoji buttons directly under the title -->
+        <div class="emoji-buttons-container">
+            <button class="emoji-button" onclick="submitMood('happy')">😊</button>
+            <button class="emoji-button" onclick="submitMood('sad')">😢</button>
+            <button class="emoji-button" onclick="submitMood('angry')">😡</button>
+            <button class="emoji-button" onclick="submitMood('romantic')">😍</button>
+            <button class="emoji-button" onclick="submitMood('random')">🎲</button>
+        </div>
+
+        <p>Select your mood or enter it manually!</p>
+
+        <!-- Manual mood input -->
+        <form id="mood-form">
+            <div class="input-container">
+                <input type="text" id="mood" name="mood" placeholder="Enter your mood" required>
+                <button type="submit" id="submit-button">Get Started</button>
+            </div>
+        </form>
+
+        <div id="loading-message"></div>
+    </div>
+
+    <div class="songs-container" id="songs-container"></div>
+</div>
+
+<script>
+    let sessionHistory = [];
+    let isHardCodedMode = false;
+
+    const hardcodedSongs = {
+        'happy': [
+            {
+                'name': 'Happy',
+                'artist': 'Pharrell Williams',
+                'url': 'https://open.spotify.com/track/60nZcImufyMA1MKQY3dcCH',
+                'image': 'https://i.scdn.co/image/ab67616d0000b273cdefc2e829c9d31f8a5a71c1'
+            },
+            {
+                'name': 'Best Day Of My Life',
+                'artist': 'American Authors',
+                'url': 'https://open.spotify.com/track/0fKTyh9lMYeY9fZct8xgIO',
+                'image': 'https://i.scdn.co/image/ab67616d0000b2734eae0a2dfd3a0d1190294316'
+            }
+        ],
+        'sad': [
+            {
+                'name': 'Someone Like You',
+                'artist': 'Adele',
+                'url': 'https://open.spotify.com/track/4kflIGfjdZJW4ot2ioixTB',
+                'image': 'https://i.scdn.co/image/ab67616d0000b2730ff6b1cf38b942eabfb4ee6d'
+            },
+            {
+                'name': 'Fix You',
+                'artist': 'Coldplay',
+                'url': 'https://open.spotify.com/track/0X8egG2Cf2uRkl5p3ucB5q',
+                'image': 'https://i.scdn.co/image/ab67616d0000b273f0e1fae7df199c49e12a9901'
+            }
+        ],
+        'angry': [
+            {
+                'name': 'Killing In The Name',
+                'artist': 'Rage Against The Machine',
+                'url': 'https://open.spotify.com/track/5lbpWzIbbqWXLA7CCBFtVj',
+                'image': 'https://i.scdn.co/image/ab67616d0000b2736f3ee6cc8df1fe01fa1d2f18'
+            },
+            {
+                'name': 'Break Stuff',
+                'artist': 'Limp Bizkit',
+                'url': 'https://open.spotify.com/track/2VPX1jBf6vVmRbZsQbD3Y7',
+                'image': 'https://i.scdn.co/image/ab67616d0000b2739f3b8c2f576e0f6556a0b3c1'
+            }
+        ],
+        'romantic': [
+            {
+                'name': 'Thinking Out Loud',
+                'artist': 'Ed Sheeran',
+                'url': 'https://open.spotify.com/track/34gCuhDGsG4bRPIf9bb02f',
+                'image': 'https://i.scdn.co/image/ab67616d0000b273f8c82d9fb711d9e5aeebc5b1'
+            },
+            {
+                'name': 'All of Me',
+                'artist': 'John Legend',
+                'url': 'https://open.spotify.com/track/3U4isOIWM3V5gU4lPLTG7K',
+                'image': 'https://i.scdn.co/image/ab67616d0000b27330d777c20baf93e0ce488a01'
+            }
+        ],
+        'random': [
+            {
+                'name': 'Bohemian Rhapsody',
+                'artist': 'Queen',
+                'url': 'https://open.spotify.com/track/7tFiyTwD0nx5a1eklYtX2J',
+                'image': 'https://i.scdn.co/image/ab67616d0000b273f3db188defd90d40c31dd1fe'
+            },
+            {
+                'name': 'Shape of You',
+                'artist': 'Ed Sheeran',
+                'url': 'https://open.spotify.com/track/7qiZfU4dY1lWllzX7mPBI3',
+                'image': 'https://i.scdn.co/image/ab67616d0000b273835ddf4b3f8225c6356a1837'
+            }
+        ]
+    };
+
+    // Function to toggle sidebar visibility and change button appearance
+    function toggleSidebar() {
+        const sidebar = document.getElementById('sidebar');
+        const mainContainer = document.getElementById('main-container');
+        const sidebarToggle = document.querySelector('.sidebar-toggle');
+        sidebar.classList.toggle('open');
+        mainContainer.style.marginRight = sidebar.classList.contains('open') ? '300px' : '0';
+
+        if (sidebar.classList.contains('open')) {
+            sidebarToggle.querySelector('span:nth-child(1)').style.transform = 'rotate(-45deg) translate(-5px, 6px)';
+            sidebarToggle.querySelector('span:nth-child(2)').style.opacity = '0';
+            sidebarToggle.querySelector('span:nth-child(3)').style.transform = 'rotate(45deg) translate(-5px, -6px)';
+            sidebarToggle.style.right = '320px';
+        } else {
+            sidebarToggle.querySelector('span:nth-child(1)').style.transform = 'none';
+            sidebarToggle.querySelector('span:nth-child(2)').style.opacity = '1';
+            sidebarToggle.querySelector('span:nth-child(3)').style.transform = 'none';
+            sidebarToggle.style.right = '20px';
+        }
+    }
+
+    // Function to fetch history from server and update display
+    function fetchHistory() {
+        fetch('/history')
+            .then(response => response.json())
+            .then(history => {
+                sessionHistory = history;
+                updateHistoryDisplay();
+            })
+            .catch(error => console.error('Error:', error));
+    }
+
+    // Function to update the displayed history list
+    function updateHistoryDisplay() {
+        const historyList = document.getElementById('history-list');
+        historyList.innerHTML = '';
+        sessionHistory.forEach((entry, index) => {
+            const historyItem = document.createElement('div');
+            historyItem.className = 'history-item';
+            historyItem.textContent = entry.mood;
+            historyItem.onclick = () => {
+                displaySavedSongs(entry);
+            };
+            historyList.appendChild(historyItem);
+        });
+    }
+
+    // Function to display songs from a selected history entry
+    function displaySavedSongs(entry) {
+        updateSongsDisplay(entry.mood, entry.songs);
+    }
+
+    // Function to clear the session history
+    function clearHistory() {
+        fetch('/clear_history', { method: 'POST' })
+            .then(response => response.json())
+            .then(data => {
+                sessionHistory = [];
+                updateHistoryDisplay();
+                // Clear displayed songs
+                document.getElementById('songs-container').innerHTML = '';
+            })
+            .catch(error => console.error('Error:', error));
+    }
+
+    // Function to submit mood and get song recommendations
+    function submitMood(mood) {
+        if (isHardCodedMode) {
+            let songs = hardcodedSongs[mood] || [];
+            updateSongsDisplay(mood, songs);
+        } else {
+            const loadingMessage = document.getElementById('loading-message');
+            loadingMessage.textContent = "Getting recommendations...";
+
+            fetch('/recommend', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: `mood=${encodeURIComponent(mood)}`
+            })
+                .then(response => response.json())
+                .then(data => {
+                    loadingMessage.textContent = "";
+                    updateSongsDisplay(data.mood, data.songs);
+                    fetchHistory();  // Update history after new recommendation
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    loadingMessage.textContent = "An error occurred. Please try again.";
+                });
+        }
+    }
+
+    // Function to update the displayed list of recommended songs
+    function updateSongsDisplay(mood, songs) {
+        const songsContainer = document.getElementById('songs-container');
+        songsContainer.innerHTML = `
+            <h2 class="mood-title">Songs for "${mood}"</h2>
+            <ul>
+                ${songs.map((song, index) => `
+                    <li style="animation-delay: ${index * 0.1}s;">
+                        <img src="${song.image}" alt="Album cover">
+                        <a href="${song.url}" target="_blank">${song.name} by ${song.artist}</a>
+                    </li>
+                `).join('')}
+            </ul>
+        `;
+    }
+
+    // Function to toggle between modes
+    function toggleMode() {
+        isHardCodedMode = document.getElementById('hardcoded-toggle').checked;
+        const switchText = document.getElementById('switch-text');
+        // Adjust the UI accordingly
+        if (isHardCodedMode) {
+            // Change text to 'Non-AI'
+            switchText.textContent = 'Non-AI';
+            // Hide the manual mood input form
+            document.getElementById('mood-form').style.display = 'none';
+            // Clear any displayed songs
+            document.getElementById('songs-container').innerHTML = '';
+            // Clear the history
+            sessionHistory = [];
+            updateHistoryDisplay();
+        } else {
+            // Change text to 'AI'
+            switchText.textContent = 'AI';
+            // Show the manual mood input form
+            document.getElementById('mood-form').style.display = 'block';
+            // Clear any displayed songs
+            document.getElementById('songs-container').innerHTML = '';
+            // Fetch history when switching back
+            fetchHistory();
+        }
+    }
+
+    // Event listener for form submission
+    document.getElementById('mood-form').onsubmit = function(e) {
+        e.preventDefault();
+        const mood = document.getElementById('mood').value;
+        submitMood(mood);
+    };
+
+    // Fetch history when page loads
+    document.addEventListener('DOMContentLoaded', function() {
+        fetchHistory();
+    });
+</script>
+</body>
+</html>
