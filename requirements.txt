@@ -88,8 +88,7 @@ sympy==1.12.1
 tensorboard==2.13.0
 tensorboard-data-server==0.7.2
 tensorflow-estimator==2.13.0
-tensorflow-macos==2.13.0
-tensorflow-metal==1.0.1
+tensorflow==2.13.0
 termcolor==2.4.0
 textblob==0.18.0.post0
 tokenizers==0.19.1
